@@ -1,0 +1,11 @@
+
+interface IRequestHandler export {
+  fn handle(virtual self &!IRequestHandler, request_body str) str;
+}
+
+fn handleRequest(handler &!IRequestHandler, request_body str) str export {
+  ret handler!.handle(request_body);
+}
+
+fn runServer(handler &IRequestHandler) extern;
+
