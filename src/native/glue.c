@@ -7,22 +7,25 @@
 #include "rocketvale/handleRequest.h"
 #include "rocketvale/runServer.h"
 
-DEFINE_CLOSURE_1(HandleRequestCallback, rocketvale_IRequestHandlerRef, ValeStr*, ValeStr*);
+DEFINE_CLOSURE_2(HandleRequestCallback, rocketvale_IRequestHandlerRef, ValeStr*, ValeStr*, ValeStr*);
 
-extern ValeStr* rocketvale_c_handle_request(rocketvale_IRequestHandlerRef handlerRef, ValeStr *request_body) {
+extern ValeStr* rocketvale_c_handle_request(
+    rocketvale_IRequestHandlerRef handlerRef,
+    ValeStr *request_path,
+    ValeStr *request_body) {
   // rocketvale_IRequestHandlerRef handlerRef = *handlerRefPtr;
 
   printf("in c, handlerRef 0: %lld\n", handlerRef.unused0);
   printf("in c, handlerRef 1: %lld\n", handlerRef.unused1);
   printf("in c, handlerRef 2: %lld\n", handlerRef.unused2);
-  printf("in c, handlerRef 3: %lld\n", handlerRef.unused3);
+  printf("in c, handlerRef 3: %d\n", handlerRef.unused3);
 
   printf("in c, request_body ptr: %p\n", request_body);
   printf("in c, request_body len: %d\n", request_body->length);
   printf("in c, request_body chars ptr: %p\n", request_body->chars);
   printf("in c, request_body chars: %s\n", request_body->chars);
 
-  ValeStr* result = rocketvale_handleRequest(&handlerRef, request_body);
+  ValeStr* result = rocketvale_handleRequest(handlerRef, request_path, request_body);
 
   printf("in c, result ptr: %p\n", result);
   printf("in c, result contents ptr: %p\n", &result->chars[0]);
@@ -33,8 +36,7 @@ extern ValeStr* rocketvale_c_handle_request(rocketvale_IRequestHandlerRef handle
 
 extern void rocketvale_rust_run_server(HandleRequestCallback* callback);
 
-void rocketvale_runServer(rocketvale_IRequestHandlerRef* handlerRefPtr) {
-  rocketvale_IRequestHandlerRef handlerRef = *handlerRefPtr;
+void rocketvale_runServer(rocketvale_IRequestHandlerRef handlerRef) {
   HandleRequestCallback callback = { handlerRef, rocketvale_c_handle_request };
   rocketvale_rust_run_server(&callback);
 }

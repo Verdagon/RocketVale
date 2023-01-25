@@ -1,11 +1,11 @@
 
-interface IRequestHandler export {
-  fn handle(virtual self &!IRequestHandler, request_body str) str;
+exported interface IRequestHandler {
+  func handle(virtual self &IRequestHandler, request_path str, request_body str) str;
 }
 
-fn handleRequest(handler &!IRequestHandler, request_body str) str export {
-  ret handler!.handle(request_body);
+exported func handleRequest(handler &IRequestHandler, request_path str, request_body str) str {
+  return handler.handle(request_path, request_body);
 }
 
-fn runServer(handler &IRequestHandler) extern;
+extern func runServer(handler &IRequestHandler);
 
